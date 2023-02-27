@@ -1,0 +1,15 @@
+{
+  "name": "loopmusicplayer-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify root/main.js -o root/app.js && minify root/app.js > root/app.min.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "music-metadata-browser": "^2.5.9"
+  }
+}
