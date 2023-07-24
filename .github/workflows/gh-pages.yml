@@ -18,8 +18,6 @@ jobs:
           node-version: 18
 
       - run: npm ci
-      - run: npm install -g browserify
-      - run: npm install -g minify
       - run: npm run build
       
       - name: Deploy
