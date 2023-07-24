@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run browserify && npm run minify",
+    "build": "npm run compile && npm run browserify && npm run minify",
+    "compile": "node_modules/.bin/tsc root/main.ts",
     "browserify": "node_modules/.bin/browserify root/main.js -o root/app.js",
     "minify": "node_modules/.bin/minify root/app.js > root/app.min.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +16,9 @@
     "music-metadata-browser": "^2.5.10"
   },
   "devDependencies": {
+    "@types/node": "^20.4.4",
     "browserify": "^17.0.0",
-    "minify": "^9.2.0"
+    "minify": "^9.2.0",
+    "typescript": "^5.1.6"
   }
 }
