@@ -81,6 +81,10 @@ file_dom.onchange = async () => {
             arrayBuffer: decodedBufferArray,
             id: mus_id++,
         };
+        if (new_snd.metadata.format.numberOfSamples === undefined)
+        {
+            new_snd.metadata.format.numberOfSamples = Math.ceil(new_snd.metadata.format.duration * new_snd.metadata.format.sampleRate);
+        }
 
         sound_list.push(new_snd);
 
