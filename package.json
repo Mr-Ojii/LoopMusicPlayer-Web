@@ -16,7 +16,7 @@
     "music-metadata-browser": "^2.5.10"
   },
   "devDependencies": {
-    "@types/node": "^20.11.28",
+    "@types/node": "^20.11.29",
     "browserify": "^17.0.0",
     "minify": "^9.2.0",
     "typescript": "^5.4.2"
