@@ -19,6 +19,6 @@
     "@types/node": "^20.12.3",
     "browserify": "^17.0.0",
     "minify": "^9.2.0",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.5"
   }
 }
