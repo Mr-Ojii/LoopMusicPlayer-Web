@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "music-metadata-browser": "^2.5.10"
+    "music-metadata-browser": "^2.5.11"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",
