@@ -43,9 +43,9 @@ file_dom.onchange = async () => {
             return;
         }
 
-        let loopStart = null;
-        let loopLength = null;
-        let loopEnd = null;
+        let loopStart : number | null = null;
+        let loopLength : number | null = null;
+        let loopEnd : number | null = null;
 
         if (metadata.native.vorbis != null) {
             const loopStartITag = metadata.native.vorbis.find((v) => v.id.toUpperCase() === "LOOPSTART");
