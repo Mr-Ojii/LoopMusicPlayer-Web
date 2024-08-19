@@ -1,4 +1,4 @@
-import * as musicMetadata from 'music-metadata-browser';
+import * as musicMetadata from 'music-metadata';
 
 
 interface SoundInfo {
@@ -33,7 +33,7 @@ file_dom.onchange = async () => {
             return;
         let blob = file_dom.files[0];
         let fileBufferArray = await blob.arrayBuffer();
-        const metadata = await musicMetadata.parseBlob(blob);
+        const metadata = await musicMetadata.parseWebStream(await blob.stream());
 
         // console.log(blob);
         // console.log(metadata);
