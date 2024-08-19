@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run compile && npm run browserify && npm run minify",
-    "compile": "npx tsc root/main.ts",
-    "browserify": "npx browserify root/main.js -o root/app.js",
-    "minify": "npx minify root/app.js > root/app.min.js",
+    "compile": "npx tsc dist/main.ts",
+    "browserify": "npx browserify dist/main.js -o dist/app.js",
+    "minify": "npx minify dist/app.js > dist/app.min.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
