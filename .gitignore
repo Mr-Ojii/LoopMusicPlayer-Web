@@ -1,3 +1,5 @@
 /node_modules/
-app*.js*
-main.js
+/dist/*
+!/dist/apple-touch-icon.png
+!/dist/favicon.ico
+!/dist/index.html

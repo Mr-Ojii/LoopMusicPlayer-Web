@@ -1,5 +1,4 @@
-import * as musicMetadata from 'music-metadata';
-
+import { loadMusicMetadata } from 'music-metadata';
 
 interface SoundInfo {
     file: Blob,
@@ -24,6 +23,7 @@ let mus_id: number = 0;
 
 let file_dom = document.getElementById("file") as HTMLInputElement;
 let loading_dom = document.getElementById("loading") as HTMLDivElement;
+
 file_dom.onchange = async () => {
     loading_dom.innerHTML = "loading...";
     file_dom.disabled = true;
@@ -33,6 +33,7 @@ file_dom.onchange = async () => {
             return;
         let blob = file_dom.files[0];
         let fileBufferArray = await blob.arrayBuffer();
+        const musicMetadata = await loadMusicMetadata();
         const metadata = await musicMetadata.parseWebStream(await blob.stream());
 
         // console.log(blob);
