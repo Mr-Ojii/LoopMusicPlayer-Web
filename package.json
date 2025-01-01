@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "music-metadata": "^10.6.2"
+    "music-metadata": "^10.6.4"
   },
   "devDependencies": {
     "@types/node": "^22.10.3",
