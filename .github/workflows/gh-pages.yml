@@ -17,8 +17,8 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm ci
-      - run: npm run build
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm run build
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
