@@ -1,4 +1,4 @@
-import { loadMusicMetadata } from 'music-metadata';
+const loadMusicMetadata = import('music-metadata');
 
 interface SoundInfo {
     file: Blob,
@@ -33,7 +33,7 @@ file_dom.onchange = async () => {
             return;
         let blob = file_dom.files[0];
         let fileBufferArray = await blob.arrayBuffer();
-        const musicMetadata = await loadMusicMetadata();
+        const musicMetadata = await loadMusicMetadata;
         const metadata = await musicMetadata.parseWebStream(await blob.stream());
 
         // console.log(blob);
