@@ -31,105 +31,110 @@ file_dom.onchange = async () => {
     try {
         if (!file_dom.files)
             return;
-        let blob = file_dom.files[0];
-        let fileBufferArray = await blob.arrayBuffer();
-        const musicMetadata = await loadMusicMetadata;
-        const metadata = await musicMetadata.parseWebStream(await blob.stream());
+        for (let i = 0; i < file_dom.files.length; i++) {
+            try {
+                let blob = file_dom.files[i];
+                let fileBufferArray = await blob.arrayBuffer();
+                const musicMetadata = await loadMusicMetadata;
+                const metadata = await musicMetadata.parseWebStream(await blob.stream());
 
-        // console.log(blob);
-        // console.log(metadata);
+                // console.log(blob);
+                // console.log(metadata);
 
-        if (metadata == null || metadata.native == null || metadata.format == null || metadata.format.sampleRate == null) {
-            alert("failed to read audio data.");
-            return;
+                if (metadata == null || metadata.native == null || metadata.format == null || metadata.format.sampleRate == null) {
+                    throw new Error(`failed to read audio metadata: ${blob.name}`);
+                }
+
+                let loopStart: number | null = null;
+                let loopLength: number | null = null;
+                let loopEnd: number | null = null;
+
+                if (metadata.native.vorbis != null) {
+                    const loopStartITag = metadata.native.vorbis.find((v) => v.id.toUpperCase() === "LOOPSTART");
+                    const loopLengthITag = metadata.native.vorbis.find((v) => v.id.toUpperCase() === "LOOPLENGTH");
+                    const loopEndITag = metadata.native.vorbis.find((v) => v.id.toUpperCase() === "LOOPEND");
+
+                    if (loopStartITag !== undefined)
+                        loopStart = Number(loopStartITag.value);
+                    if (loopLengthITag !== undefined)
+                        loopLength = Number(loopLengthITag.value);
+                    if (loopEndITag !== undefined)
+                        loopEnd = Number(loopEndITag.value);
+
+                    if (loopEnd == null && loopStart != null && loopLength != null)
+                        loopEnd = loopStart + loopLength;
+
+                    if (loopLength == null && loopStart != null && loopEnd != null)
+                        loopLength = loopEnd - loopStart;
+                }
+
+
+                let decodedBufferArray = await context.decodeAudioData(fileBufferArray);
+
+                const new_snd: SoundInfo = {
+                    file: blob,
+                    metadata: metadata,
+                    loopStart: loopStart,
+                    loopLength: loopLength,
+                    loopEnd: loopEnd,
+                    //??と?は違う動きをする
+                    title: metadata.common.title ? metadata.common.title : blob.name,
+                    artist: metadata.common.artist,
+                    arrayBuffer: decodedBufferArray,
+                    id: mus_id++,
+                };
+                if (new_snd.metadata.format.numberOfSamples === undefined) {
+                    new_snd.metadata.format.numberOfSamples = Math.ceil(new_snd.metadata.format.duration * new_snd.metadata.format.sampleRate);
+                }
+
+                sound_list.push(new_snd);
+
+                let tr = document.createElement("tr");
+                {
+                    let td = document.createElement("td");
+                    let inp = document.createElement("input");
+                    inp.type = "radio";
+                    inp.name = "selected";
+                    inp.value = String(new_snd.id);
+                    td.appendChild(inp);
+                    tr.appendChild(td);
+                }
+                {
+                    let td = document.createElement("td");
+                    td.innerText = new_snd.title;
+                    tr.appendChild(td);
+                }
+                {
+                    let td = document.createElement("td");
+                    td.innerText = getFormattedTimeStr(new_snd.metadata.format.duration);
+                    tr.appendChild(td);
+                }
+                {
+                    let td = document.createElement("td");
+                    td.innerText = (new_snd.loopStart && new_snd.loopEnd) ? "Loop" : "";
+                    tr.appendChild(td);
+                }
+                {
+                    let td = document.createElement("td");
+                    td.innerText = new_snd.artist ?? "";
+                    tr.appendChild(td);
+                }
+                {
+                    let td = document.createElement("td");
+                    let but = document.createElement("button") as HTMLButtonElement;
+                    but.innerText = "Remove";
+                    but.name = "Remove";
+                    but.value = String(new_snd.id);
+                    but.addEventListener('click', remove_list);
+                    td.appendChild(but);
+                    tr.appendChild(td);
+                }
+                (document.getElementById("tbody") as HTMLTableElement).appendChild(tr);
+            } catch (e) {
+                console.error("Error processing file:", file_dom.files[i].name, e);
+                alert("Error processing file: " + file_dom.files[i].name + "\n" + e);
+            }
         }
-
-        let loopStart : number | null = null;
-        let loopLength : number | null = null;
-        let loopEnd : number | null = null;
-
-        if (metadata.native.vorbis != null) {
-            const loopStartITag = metadata.native.vorbis.find((v) => v.id.toUpperCase() === "LOOPSTART");
-            const loopLengthITag = metadata.native.vorbis.find((v) => v.id.toUpperCase() === "LOOPLENGTH");
-            const loopEndITag = metadata.native.vorbis.find((v) => v.id.toUpperCase() === "LOOPEND");
-
-            if (loopStartITag !== undefined)
-                loopStart = Number(loopStartITag.value);
-            if (loopLengthITag !== undefined)
-                loopLength = Number(loopLengthITag.value);
-            if (loopEndITag !== undefined)
-                loopEnd = Number(loopEndITag.value);
-
-            if (loopEnd == null && loopStart != null && loopLength != null)
-                loopEnd = loopStart + loopLength;
-
-            if (loopLength == null && loopStart != null && loopEnd != null)
-                loopLength = loopEnd - loopStart;
-        }
-
-
-        let decodedBufferArray = await context.decodeAudioData(fileBufferArray);
-
-        const new_snd: SoundInfo = {
-            file: blob,
-            metadata: metadata,
-            loopStart: loopStart,
-            loopLength: loopLength,
-            loopEnd: loopEnd,
-            //??と?は違う動きをする
-            title: metadata.common.title ? metadata.common.title : blob.name,
-            artist: metadata.common.artist,
-            arrayBuffer: decodedBufferArray,
-            id: mus_id++,
-        };
-        if (new_snd.metadata.format.numberOfSamples === undefined)
-        {
-            new_snd.metadata.format.numberOfSamples = Math.ceil(new_snd.metadata.format.duration * new_snd.metadata.format.sampleRate);
-        }
-
-        sound_list.push(new_snd);
-
-        let tr = document.createElement("tr");
-        {
-            let td = document.createElement("td");
-            let inp = document.createElement("input");
-            inp.type = "radio";
-            inp.name = "selected";
-            inp.value = String(new_snd.id);
-            td.appendChild(inp);
-            tr.appendChild(td);
-        }
-        {
-            let td = document.createElement("td");
-            td.innerText = new_snd.title;
-            tr.appendChild(td);
-        }
-        {
-            let td = document.createElement("td");
-            td.innerText = getFormattedTimeStr(new_snd.metadata.format.duration);
-            tr.appendChild(td);
-        }
-        {
-            let td = document.createElement("td");
-            td.innerText = (new_snd.loopStart && new_snd.loopEnd) ? "Loop" : "";
-            tr.appendChild(td);
-        }
-        {
-            let td = document.createElement("td");
-            td.innerText = new_snd.artist ?? "";
-            tr.appendChild(td);
-        }
-        {
-            let td = document.createElement("td");
-            let but = document.createElement("button") as HTMLButtonElement;
-            but.innerText = "Remove";
-            but.name = "Remove";
-            but.value = String(new_snd.id);
-            but.addEventListener('click', remove_list);
-            td.appendChild(but);
-            tr.appendChild(td);
-        }
-        (document.getElementById("tbody") as HTMLTableElement).appendChild(tr);
     }
     finally {
         file_dom.disabled = false;
