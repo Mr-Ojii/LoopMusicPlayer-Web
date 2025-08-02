@@ -1,10 +1,11 @@
 const path = require("path");
+const outputPath = path.join(__dirname, "dist/");
 
 module.exports = {
   mode: 'production',
   entry: './main.ts',
   output: {
-    path: path.join(__dirname, "dist/"),
+    path: outputPath,
     filename: 'app.min.js'
   },
   resolve: {
@@ -18,5 +19,10 @@ module.exports = {
         exclude: /node_modules/
       }
     ]
+  },
+  devServer: {
+    static: {
+      directory: outputPath,
+    },
   }
 }
