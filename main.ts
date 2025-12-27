@@ -84,7 +84,7 @@ file_dom.onchange = async () => {
                     id: mus_id++,
                 };
                 if (new_snd.metadata.format.numberOfSamples === undefined) {
-                    new_snd.metadata.format.numberOfSamples = Math.ceil(new_snd.metadata.format.duration * new_snd.metadata.format.sampleRate);
+                    new_snd.metadata.format.numberOfSamples = Math.ceil(decodedBufferArray.duration * new_snd.metadata.format.sampleRate);
                 }
 
                 sound_list.push(new_snd);
@@ -106,7 +106,7 @@ file_dom.onchange = async () => {
                 }
                 {
                     let td = document.createElement("td");
-                    td.innerText = getFormattedTimeStr(new_snd.metadata.format.duration);
+                    td.innerText = getFormattedTimeStr(decodedBufferArray.duration);
                     tr.appendChild(td);
                 }
                 {
@@ -212,7 +212,7 @@ seekbar_dom.onmouseup = (e: MouseEvent) => {
     const x = Math.max(Math.min(e.clientX - rect.left, canvas.width - 5), 5) - 5;
 
     const ratio = x / (canvas.width - 10);
-    const offset = ratio * sound.metadata.format.duration;
+    const offset = ratio * sound.arrayBuffer.duration;
 
     playStop();
     playStart(offset);
@@ -262,7 +262,7 @@ function drawCall() {
         }
 
         const current = getCurrentTime();
-        let cr = ((current / sound.metadata.format.duration) * (canvas.width - 10));
+        let cr = ((current / sound.arrayBuffer.duration) * (canvas.width - 10));
         ctx.fillStyle = 'rgb(0, 0, 0)';
         ctx.fillRect(cr, 0, 10, canvas.height);
         ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -289,12 +289,12 @@ function getCurrentTime() {
             current = current - (sound.loopLength / sound.metadata.format.sampleRate);
     }
     else if (source.loop === true) {
-        let endTime = sound.metadata.format.duration;
+        let endTime = sound.arrayBuffer.duration;
         while (current > endTime)
             current = current - endTime;
     }
     else {
-        current = Math.min(current, sound.metadata.format.duration);
+        current = Math.min(current, sound.arrayBuffer.duration);
     }
     return current;
 }
