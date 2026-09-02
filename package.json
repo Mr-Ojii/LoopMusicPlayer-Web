@@ -15,7 +15,7 @@
     "music-metadata": "^11.14.0"
   },
   "devDependencies": {
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.4.0",
     "ts-loader": "^9.6.2",
     "typescript": "^6.0.3",
     "webpack": "^5.109.2",
